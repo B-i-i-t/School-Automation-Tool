@@ -1,4 +1,4 @@
-const API_URL = 'https://YOUR_FUNCTION_APP.azurewebsites.net/api/generate';
+const API_URL = 'https://school-tool-api.azurewebsites.net/api/generate';
 
 const generateForm = document.getElementById('generateForm');
 const step1 = document.getElementById('step1');

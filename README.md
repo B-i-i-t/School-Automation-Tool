@@ -42,7 +42,7 @@ npm run start
 1. Azure 上に Function App を作成し、バックエンドのデプロイ先を用意します。
 2. Azure Portal の Function App 設定で `GEMINI_API_KEY`、`GEMINI_MODEL`、`ALLOWED_ORIGIN` を環境変数として登録します。
 3. GitHub Secrets に `AZURE_FUNCTIONAPP_PUBLISH_PROFILE` を、GitHub Variables に `AZURE_FUNCTIONAPP_NAME`（Function App 名）を登録し、`backend/**` の変更で Azure Functions にデプロイできるようにします。
-4. `frontend/script.js` の `API_URL` を本番の `https://YOUR_FUNCTION_APP.azurewebsites.net/api/generate` に設定します。
+4. `frontend/script.js` の `API_URL` を本番の `https://school-tool-api.azurewebsites.net/api/generate` に設定します。
 5. `frontend/**` の変更を `main` ブランチへ push した際に GitHub Pages へ反映されるよう、GitHub Pages の公開設定または Actions を構成します。
 6. フロントエンドとバックエンドを push し、それぞれのワークフローが正しく実行されることを確認します。
 
