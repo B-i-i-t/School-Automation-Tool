@@ -64,7 +64,6 @@ Google Gemini API（モデルは環境変数で指定）
 
 ```json
 {
-  "overallGoalKeywords": "string",   // 全体目標のキーワード（必須）
   "personalGoalKeywords": "string",  // 個人目標のキーワード（必須）
   "reflectionKeywords": "string",    // 振り返りのキーワード（必須）
   "behaviorMemo": "string"           // 行動項目への任意メモ（任意）
@@ -75,16 +74,8 @@ Google Gemini API（モデルは環境変数で指定）
 
 ```json
 {
-  "overallGoal": "string",           // 生成された全体目標（16字以内）
   "personalGoal": "string",          // 生成された個人目標（16字以内）
-  "reflection": [                    // 生成された振り返り（20字×6行）
-    "string",
-    "string",
-    "string",
-    "string",
-    "string",
-    "string"
-  ],
+  "reflection": "string",            // 生成された振り返り（160字の単一文）
   "behaviors": {
     "fiveMinEarly": "string",        // 5分前行動（40字程度）
     "greeting": "string",            // 挨拶は元気よく（40字程度）
@@ -134,21 +125,16 @@ Google Gemini API（モデルは環境変数で指定）
 あなたは学校の週次振り返りシートの記入を補助するアシスタントです。
 以下の全項目を一括で生成してください。
 
-【全体目標】
-キーワード: {overallGoalKeywords}
-→ 16字以内の目標文を1つ生成してください。
-
 【個人目標】
 キーワード: {personalGoalKeywords}
 → 16字以内の目標文を1つ生成してください。
 
 【振り返り】
 キーワード: {reflectionKeywords}
-→ 20字ちょうどの文を6行生成してください。
-- 各行は必ず20字にすること
-- 体言止め・常体で統一
+→ 160字ちょうどの文を1つ生成してください。
+- 1つの段落として自然な文章にすること
 - 具体的な行動・成果・課題を含めること
-- 行間で内容が重複しないこと
+- 箇条書きや改行を使わないこと
 
 【行動項目】
 以下の4項目について「できた」前提で40字程度の理由文を生成してください。
@@ -162,9 +148,8 @@ Google Gemini API（モデルは環境変数で指定）
 
 以下のJSON形式のみで返答してください。前後の説明文や\`\`\`は絶対に含めないこと：
 {
-  "overallGoal": "...",
   "personalGoal": "...",
-  "reflection": ["...","...","...","...","...","..."],
+  "reflection": "...",
   "behaviors": {
     "fiveMinEarly": "...",
     "greeting": "...",
@@ -197,7 +182,6 @@ Google Gemini API（モデルは環境変数で指定）
 
 | フィールド | 必須 | 説明 |
 |---|---|---|
-| 全体目標キーワード | ✓ | placeholder: 例）チームの連携強化 |
 | 個人目標キーワード | ✓ | placeholder: 例）AWS SAA 試験対策 過去問 |
 | 振り返りキーワード | ✓ | textarea、placeholder: 例）過去問50問、正答率70%、EC2が苦手 |
 | 今週のひとことメモ | 任意 | 行動項目の文章に反映される |
@@ -209,20 +193,15 @@ Google Gemini API（モデルは環境変数で指定）
 #### Step 2: 結果表示画面
 
 表示内容：
-- 全体目標（16字以内）
 - 個人目標（16字以内）
-- 振り返り1〜6行（番号付き）
+- 振り返り（160字の単一文）
 - 行動項目×4（5分前行動・挨拶・話を聞く姿勢・集中力）
 
 ボタン：
 - 「コピー」: 以下の形式でクリップボードにコピー
   ```
-  【全体目標】{overallGoal}
   【個人目標】{personalGoal}
-  【振り返り】
-  1. {reflection[0]}
-  ...
-  6. {reflection[5]}
+  【振り返り】{reflection}
   【行動項目】
   5分前行動: {fiveMinEarly}
   挨拶は元気よく: {greeting}

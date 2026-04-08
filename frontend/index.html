@@ -23,17 +23,6 @@
 
         <form id="generateForm" novalidate>
           <div class="field">
-            <label for="overallGoalKeywords">全体目標キーワード</label>
-            <input
-              id="overallGoalKeywords"
-              name="overallGoalKeywords"
-              type="text"
-              required
-              placeholder="例）チームの連携強化"
-            />
-          </div>
-
-          <div class="field">
             <label for="personalGoalKeywords">個人目標キーワード</label>
             <input
               id="personalGoalKeywords"
@@ -78,18 +67,13 @@
         <p class="section-copy">生成結果を確認し、必要であればそのままコピーできます。</p>
 
         <section class="result-block">
-          <h3>全体目標</h3>
-          <p id="resultOverallGoal" class="result-text"></p>
-        </section>
-
-        <section class="result-block">
           <h3>個人目標</h3>
           <p id="resultPersonalGoal" class="result-text"></p>
         </section>
 
         <section class="result-block">
           <h3>振り返り</h3>
-          <ol id="resultReflection" class="reflection-list"></ol>
+          <p id="resultReflection" class="result-text"></p>
         </section>
 
         <section class="result-block">

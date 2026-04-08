@@ -3,14 +3,12 @@ const API_URL = 'https://school-tool-api.azurewebsites.net/api/generate';
 const generateForm = document.getElementById('generateForm');
 const step1 = document.getElementById('step1');
 const step2 = document.getElementById('step2');
-const overallGoalKeywordsInput = document.getElementById('overallGoalKeywords');
 const personalGoalKeywordsInput = document.getElementById('personalGoalKeywords');
 const reflectionKeywordsInput = document.getElementById('reflectionKeywords');
 const behaviorMemoInput = document.getElementById('behaviorMemo');
 const generateBtn = document.getElementById('generateBtn');
 const errorMsg = document.getElementById('errorMsg');
 
-const resultOverallGoal = document.getElementById('resultOverallGoal');
 const resultPersonalGoal = document.getElementById('resultPersonalGoal');
 const resultReflection = document.getElementById('resultReflection');
 const resultFiveMinEarly = document.getElementById('resultFiveMinEarly');
@@ -41,23 +39,14 @@ function setStepState(showResult) {
 }
 
 function normalizeResult(data) {
-  const reflection = Array.isArray(data?.reflection)
-    ? data.reflection.slice(0, 6).map((line) => (typeof line === 'string' ? line : ''))
-    : [];
-
-  while (reflection.length < 6) {
-    reflection.push('');
-  }
-
   const behaviors =
     data && typeof data.behaviors === 'object' && data.behaviors !== null
       ? data.behaviors
       : {};
 
   return {
-    overallGoal: typeof data?.overallGoal === 'string' ? data.overallGoal : '',
     personalGoal: typeof data?.personalGoal === 'string' ? data.personalGoal : '',
-    reflection,
+    reflection: typeof data?.reflection === 'string' ? data.reflection : '',
     behaviors: {
       fiveMinEarly:
         typeof behaviors.fiveMinEarly === 'string' ? behaviors.fiveMinEarly : '',
@@ -70,33 +59,18 @@ function normalizeResult(data) {
 }
 
 function renderResult(data) {
-  resultOverallGoal.textContent = data.overallGoal;
   resultPersonalGoal.textContent = data.personalGoal;
+  resultReflection.textContent = data.reflection;
   resultFiveMinEarly.textContent = data.behaviors.fiveMinEarly;
   resultGreeting.textContent = data.behaviors.greeting;
   resultListening.textContent = data.behaviors.listening;
   resultConcentration.textContent = data.behaviors.concentration;
-
-  resultReflection.replaceChildren();
-
-  data.reflection.forEach((line) => {
-    const item = document.createElement('li');
-    item.textContent = line;
-    resultReflection.appendChild(item);
-  });
 }
 
 function buildCopyText(data) {
   return [
-    `【全体目標】${data.overallGoal}`,
     `【個人目標】${data.personalGoal}`,
-    '【振り返り】',
-    `1. ${data.reflection[0]}`,
-    `2. ${data.reflection[1]}`,
-    `3. ${data.reflection[2]}`,
-    `4. ${data.reflection[3]}`,
-    `5. ${data.reflection[4]}`,
-    `6. ${data.reflection[5]}`,
+    `【振り返り】${data.reflection}`,
     '【行動項目】',
     `5分前行動: ${data.behaviors.fiveMinEarly}`,
     `挨拶は元気よく: ${data.behaviors.greeting}`,
@@ -138,12 +112,11 @@ function flashCopyButtonText() {
 async function handleGenerate(event) {
   event.preventDefault();
 
-  const overallGoalKeywords = overallGoalKeywordsInput.value.trim();
   const personalGoalKeywords = personalGoalKeywordsInput.value.trim();
   const reflectionKeywords = reflectionKeywordsInput.value.trim();
   const behaviorMemo = behaviorMemoInput.value.trim();
 
-  if (!overallGoalKeywords || !personalGoalKeywords || !reflectionKeywords) {
+  if (!personalGoalKeywords || !reflectionKeywords) {
     window.alert('必須項目を入力してください。');
     return;
   }
@@ -159,7 +132,6 @@ async function handleGenerate(event) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        overallGoalKeywords,
         personalGoalKeywords,
         reflectionKeywords,
         behaviorMemo,

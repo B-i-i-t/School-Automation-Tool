@@ -1,16 +1,14 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 
 interface GenerateRequest {
-  overallGoalKeywords: string;
   personalGoalKeywords: string;
   reflectionKeywords: string;
   behaviorMemo?: string;
 }
 
 interface GenerateResponse {
-  overallGoal: string;
   personalGoal: string;
-  reflection: string[];
+  reflection: string;
   behaviors: {
     fiveMinEarly: string;
     greeting: string;
@@ -111,39 +109,19 @@ function parseGenerateRequest(payload: unknown): GenerateRequest | null {
     return null;
   }
 
-  const overallGoalKeywords = parseRequiredString(payload.overallGoalKeywords);
   const personalGoalKeywords = parseRequiredString(payload.personalGoalKeywords);
   const reflectionKeywords = parseRequiredString(payload.reflectionKeywords);
   const behaviorMemo = parseOptionalString(payload.behaviorMemo);
 
-  if (!overallGoalKeywords || !personalGoalKeywords || !reflectionKeywords || behaviorMemo === null) {
+  if (!personalGoalKeywords || !reflectionKeywords || behaviorMemo === null) {
     return null;
   }
 
   return {
-    overallGoalKeywords,
     personalGoalKeywords,
     reflectionKeywords,
     ...(behaviorMemo ? { behaviorMemo } : {}),
   };
-}
-
-function parseStringArray(value: unknown): string[] | null {
-  if (!Array.isArray(value)) {
-    return null;
-  }
-
-  const parsedValues: string[] = [];
-
-  for (const item of value) {
-    if (typeof item !== "string") {
-      return null;
-    }
-
-    parsedValues.push(item.trim());
-  }
-
-  return parsedValues;
 }
 
 function parseBehaviorResponse(value: unknown): GenerateResponse["behaviors"] | null {
@@ -171,11 +149,60 @@ function parseBehaviorResponse(value: unknown): GenerateResponse["behaviors"] | 
 function extractJson(text: string): string {
   const stripped = text.trim();
   // ```json ... ``` や ``` ... ``` を除去
-  const fenceMatch = stripped.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
-  if (fenceMatch) {
-    return fenceMatch[1];
+  const fenceMatch = stripped.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  const unfenced = (fenceMatch?.[1] ?? stripped).trim();
+
+  const jsonStartIndex = unfenced.indexOf("{");
+
+  if (jsonStartIndex === -1) {
+    return unfenced;
   }
-  return stripped;
+
+  let depth = 0;
+  let inString = false;
+  let isEscaped = false;
+
+  for (let index = jsonStartIndex; index < unfenced.length; index += 1) {
+    const character = unfenced[index];
+
+    if (inString) {
+      if (isEscaped) {
+        isEscaped = false;
+        continue;
+      }
+
+      if (character === "\\") {
+        isEscaped = true;
+        continue;
+      }
+
+      if (character === "\"") {
+        inString = false;
+      }
+
+      continue;
+    }
+
+    if (character === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (character === "{") {
+      depth += 1;
+      continue;
+    }
+
+    if (character === "}") {
+      depth -= 1;
+
+      if (depth === 0) {
+        return unfenced.slice(jsonStartIndex, index + 1);
+      }
+    }
+  }
+
+  return unfenced;
 }
 
 function parseGenerateResponse(payloadText: string): GenerateResponse | null {
@@ -191,17 +218,15 @@ function parseGenerateResponse(payloadText: string): GenerateResponse | null {
     return null;
   }
 
-  const overallGoal = parseRequiredString(parsedPayload.overallGoal);
   const personalGoal = parseRequiredString(parsedPayload.personalGoal);
-  const reflection = parseStringArray(parsedPayload.reflection);
+  const reflection = parseRequiredString(parsedPayload.reflection);
   const behaviors = parseBehaviorResponse(parsedPayload.behaviors);
 
-  if (!overallGoal || !personalGoal || !reflection || reflection.length !== 6 || !behaviors) {
+  if (!personalGoal || !reflection || !behaviors) {
     return null;
   }
 
   return {
-    overallGoal: overallGoal.slice(0, 16),
     personalGoal: personalGoal.slice(0, 16),
     reflection,
     behaviors,
@@ -216,21 +241,16 @@ function buildPrompt(requestBody: GenerateRequest): string {
   return `あなたは学校の週次振り返りシートの記入を補助するアシスタントです。
 以下の全項目を一括で生成してください。
 
-【全体目標】
-キーワード: ${requestBody.overallGoalKeywords}
-→ 16字以内の目標文を1つ生成してください。
-
 【個人目標】
 キーワード: ${requestBody.personalGoalKeywords}
 → 16字以内の目標文を1つ生成してください。
 
 【振り返り】
 キーワード: ${requestBody.reflectionKeywords}
-→ 20字ちょうどの文を6行生成してください。
-- 各行は必ず20字にすること
-- 体言止め・常体で統一
+→ 160字ちょうどの文を1つ生成してください。
+- 1つの段落として自然な文章にすること
 - 具体的な行動・成果・課題を含めること
-- 行間で内容が重複しないこと
+- 箇条書きや改行を使わないこと
 
 【行動項目】
 以下の4項目について「できた」前提で40字程度の理由文を生成してください。
@@ -242,9 +262,8 @@ ${behaviorMemoSection}- 5分前行動：授業・活動の5分前には準備を
 
 以下のJSON形式のみで返答してください。前後の説明文や\`\`\`は絶対に含めないこと：
 {
-  "overallGoal": "...",
   "personalGoal": "...",
-  "reflection": ["...","...","...","...","...","..."],
+  "reflection": "...",
   "behaviors": {
     "fiveMinEarly": "...",
     "greeting": "...",
