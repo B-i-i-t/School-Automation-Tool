@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>振り返りシート自動化ツール</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <p class="eyebrow">Weekly Reflection</p>
+        <h1>振り返りシート自動化ツール</h1>
+        <p class="lead">
+          キーワードを入力すると、目標文・振り返り・行動項目をまとめて生成します。
+        </p>
+      </header>
+
+      <div id="step1" class="panel">
+        <h2>Step 1</h2>
+        <p class="section-copy">今週の内容を短いキーワードで入力してください。</p>
+
+        <form id="generateForm" novalidate>
+          <div class="field">
+            <label for="overallGoalKeywords">全体目標キーワード</label>
+            <input
+              id="overallGoalKeywords"
+              name="overallGoalKeywords"
+              type="text"
+              required
+              placeholder="例）チームの連携強化"
+            />
+          </div>
+
+          <div class="field">
+            <label for="personalGoalKeywords">個人目標キーワード</label>
+            <input
+              id="personalGoalKeywords"
+              name="personalGoalKeywords"
+              type="text"
+              required
+              placeholder="例）AWS SAA 試験対策 過去問"
+            />
+          </div>
+
+          <div class="field">
+            <label for="reflectionKeywords">振り返りキーワード</label>
+            <textarea
+              id="reflectionKeywords"
+              name="reflectionKeywords"
+              required
+              rows="5"
+              placeholder="例）過去問50問、正答率70%、EC2が苦手"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label for="behaviorMemo">今週のひとことメモ（任意）</label>
+            <input
+              id="behaviorMemo"
+              name="behaviorMemo"
+              type="text"
+              placeholder="例）クラスで司会を担当して前に出る機会が多かった"
+            />
+          </div>
+
+          <div class="actions">
+            <button id="generateBtn" type="submit">生成する</button>
+          </div>
+
+          <p id="errorMsg" style="display: none" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div id="step2" class="panel" style="display: none">
+        <h2>Step 2</h2>
+        <p class="section-copy">生成結果を確認し、必要であればそのままコピーできます。</p>
+
+        <section class="result-block">
+          <h3>全体目標</h3>
+          <p id="resultOverallGoal" class="result-text"></p>
+        </section>
+
+        <section class="result-block">
+          <h3>個人目標</h3>
+          <p id="resultPersonalGoal" class="result-text"></p>
+        </section>
+
+        <section class="result-block">
+          <h3>振り返り</h3>
+          <ol id="resultReflection" class="reflection-list"></ol>
+        </section>
+
+        <section class="result-block">
+          <h3>行動項目</h3>
+          <div class="behavior-item">
+            <h4>5分前行動</h4>
+            <p id="resultFiveMinEarly"></p>
+          </div>
+          <div class="behavior-item">
+            <h4>挨拶は元気よく</h4>
+            <p id="resultGreeting"></p>
+          </div>
+          <div class="behavior-item">
+            <h4>話を聞く姿勢を正す</h4>
+            <p id="resultListening"></p>
+          </div>
+          <div class="behavior-item">
+            <h4>集中力を高めてやる</h4>
+            <p id="resultConcentration"></p>
+          </div>
+        </section>
+
+        <div class="actions result-actions">
+          <button id="copyBtn" type="button">コピー</button>
+          <button id="retryBtn" type="button" class="secondary-button">
+            やり直す
+          </button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

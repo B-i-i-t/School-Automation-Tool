@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "GEMINI_API_KEY": "your-gemini-api-key",
+    "GEMINI_MODEL": "gemini-2.5-flash-lite",
+    "ALLOWED_ORIGIN": "http://localhost:3000"
+  }
+}
