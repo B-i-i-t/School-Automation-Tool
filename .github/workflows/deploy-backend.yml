@@ -28,6 +28,6 @@ jobs:
       - name: Deploy to Azure Functions
         uses: azure/functions-action@v1
         with:
-          app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
+          app-name: school-tool-api
           package: backend
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
