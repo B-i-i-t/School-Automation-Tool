@@ -168,11 +168,21 @@ function parseBehaviorResponse(value: unknown): GenerateResponse["behaviors"] | 
   };
 }
 
+function extractJson(text: string): string {
+  const stripped = text.trim();
+  // ```json ... ``` や ``` ... ``` を除去
+  const fenceMatch = stripped.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
+  if (fenceMatch) {
+    return fenceMatch[1];
+  }
+  return stripped;
+}
+
 function parseGenerateResponse(payloadText: string): GenerateResponse | null {
   let parsedPayload: unknown;
 
   try {
-    parsedPayload = JSON.parse(payloadText.trim()) as unknown;
+    parsedPayload = JSON.parse(extractJson(payloadText)) as unknown;
   } catch {
     return null;
   }
