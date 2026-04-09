@@ -54,7 +54,7 @@ interface GeminiPart {
 type JsonObject = Record<string, unknown>;
 
 const DEFAULT_ALLOWED_ORIGIN = "http://localhost:3000";
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_MODEL = "gemini-3.1-flash-lite";
 
 function getCorsHeaders(): Record<string, string> {
   return {

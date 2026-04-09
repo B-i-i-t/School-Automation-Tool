@@ -51,7 +51,7 @@ npm run start
 | 変数名 | 説明 |
 | --- | --- |
 | `GEMINI_API_KEY` | Google Gemini API キー |
-| `GEMINI_MODEL` | 使用する Gemini モデル名。未指定時の既定値は `gemini-2.5-flash-lite` |
+| `GEMINI_MODEL` | 使用する Gemini モデル名。未指定時の既定値は `gemini-3.1-flash-lite` |
 | `ALLOWED_ORIGIN` | CORS で許可するオリジン。GitHub Pages の URL を指定 |
 
 ## セキュリティ注意事項

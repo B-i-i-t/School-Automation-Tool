@@ -101,14 +101,14 @@ Google Gemini API（モデルは環境変数で指定）
 | 変数名 | 説明 |
 |---|---|
 | `GEMINI_API_KEY` | Google Gemini APIキー |
-| `GEMINI_MODEL` | 使用するGeminiモデル名（デフォルト: `gemini-2.5-flash-lite`） |
+| `GEMINI_MODEL` | 使用するGeminiモデル名（デフォルト: `gemini-3.1-flash-lite`） |
 | `ALLOWED_ORIGIN` | CORSで許可するオリジン（例: `https://username.github.io`） |
 
 #### モデル選定の考え方
 
-- デフォルトは現時点で最安の `gemini-2.5-flash-lite` を使用
+- デフォルトは `gemini-3.1-flash-lite` を使用
 - モデルが廃止された場合はAzure Portalで `GEMINI_MODEL` の値を変更するだけで対応可能（コード変更・再デプロイ不要）
-- バージョン番号なしのエイリアス（例: `gemini-2.5-flash-lite`）を使うことで、同一モデルファミリーの最新stableに自動追従する
+- バージョン番号なしのエイリアス（例: `gemini-3.1-flash-lite`）を使うことで、同一モデルファミリーの最新stableに自動追従する
 
 ### CORS設定
 
@@ -118,7 +118,7 @@ Google Gemini API（モデルは環境変数で指定）
 
 ### Geminiプロンプト仕様
 
-モデル: 環境変数 `GEMINI_MODEL`（デフォルト: `gemini-2.5-flash-lite`）
+モデル: 環境変数 `GEMINI_MODEL`（デフォルト: `gemini-3.1-flash-lite`）
 呼び出し回数: 1回（全項目を一括生成）
 
 ```
